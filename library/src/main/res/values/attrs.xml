@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="RunningTextView">
+        <attr name="scrollDuration" format="integer"/>
+        <attr name="scrollAutoPlay" format="boolean" />
+    </declare-styleable>
+
+</resources>

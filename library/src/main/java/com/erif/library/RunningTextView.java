@@ -1,96 +1,101 @@
 package com.erif.library;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Rect;
+import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
 public class RunningTextView extends AppCompatTextView {
 
-    // scrolling feature
-    private Scroller mSlr;
+    private Scroller scroller;
+    private long duration = 10000L;
+    private int pausedX = 0;
+    private boolean paused = true;
+    private boolean autoplay = false;
 
-    // milliseconds for a round of scrolling
-    private int mRndDuration = 10000;
-
-    // the X offset when paused
-    private int mXPaused = 0;
-
-    // whether it's being paused
-    private boolean mPaused = true;
-
-    /*
-     * constructor
-     */
     public RunningTextView(Context context) {
         this(context, null);
-        // customize the TextView
-        setSingleLine();
-        setEllipsize(null);
-        setVisibility(INVISIBLE);
+        init(context, null, 0);
     }
 
-    /*
-     * constructor
-     */
     public RunningTextView(Context context, AttributeSet attrs) {
         this(context, attrs, android.R.attr.textViewStyle);
-        // customize the TextView
-        setSingleLine();
-        setEllipsize(null);
-        setVisibility(INVISIBLE);
+        init(context, attrs, 0);
     }
 
-    /*
-     * constructor
-     */
-    public RunningTextView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        // customize the TextView
+    public RunningTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context, attrs, defStyleAttr);
+    }
+
+    private void init(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        Resources.Theme theme = context.getTheme();
+        if (theme != null) {
+            TypedArray typedArray = theme.obtainStyledAttributes(
+                    attrs, R.styleable.RunningTextView, defStyleAttr, 0
+            );
+            try {
+                duration = typedArray.getInteger(R.styleable.RunningTextView_scrollDuration, 10000);
+                autoplay = typedArray.getBoolean(R.styleable.RunningTextView_scrollAutoPlay, false);
+            } finally {
+                typedArray.recycle();
+            }
+        }
         setSingleLine();
+        setMaxLines(1);
         setEllipsize(null);
         setVisibility(INVISIBLE);
+        post(() -> {
+            String mText = getText().toString();
+            if (autoplay &&  mText != null) {
+                start();
+            }
+        });
     }
 
     /**
      * begin to scroll the text from the original position
      */
-    public void startScroll() {
+    public void start() {
         // begin from the very right side
-        mXPaused = -1 * getWidth();
+        pausedX = -1 * getWidth();
         // assume it's paused
-        mPaused = true;
-        resumeScroll();
+        paused = true;
+        resume();
     }
 
     /**
      * resume the scroll from the pausing point
      */
-    public void resumeScroll() {
-
-        if (!mPaused)
+    public void resume() {
+        if (!paused)
             return;
-
         // Do not know why it would not scroll sometimes
         // if setHorizontallyScrolling is called in constructor.
         setHorizontallyScrolling(true);
 
         // use LinearInterpolator for steady scrolling
-        mSlr = new Scroller(this.getContext(), new LinearInterpolator());
-        setScroller(mSlr);
+        scroller = new Scroller(getContext(), new LinearInterpolator());
+        setScroller(scroller);
 
         int scrollingLen = calculateScrollingLen();
-        int distance = scrollingLen - (getWidth() + mXPaused);
-        double getDuration = mRndDuration * distance * 1.00000 / scrollingLen;
+        int distance = scrollingLen - (getWidth() + pausedX);
+        double getDuration = duration * distance * 1.00000 / scrollingLen;
         int duration = (int) getDuration;
 
         setVisibility(VISIBLE);
-        mSlr.startScroll(mXPaused, 0, distance, 0, duration);
+        scroller.startScroll(pausedX, 0, distance, 0, duration);
         invalidate();
-        mPaused = false;
+        paused = false;
     }
 
     /**
@@ -111,47 +116,55 @@ public class RunningTextView extends AppCompatTextView {
     /**
      * pause scrolling the text
      */
-    public void pauseScroll() {
-        if (null == mSlr)
+    public void pause() {
+        if (null == scroller)
             return;
 
-        if (mPaused)
+        if (paused)
             return;
 
-        mPaused = true;
+        paused = true;
 
         // abortAnimation sets the current X to be the final X,
         // and sets isFinished to be true
         // so current position shall be saved
-        mXPaused = mSlr.getCurrX();
+        pausedX = scroller.getCurrX();
 
-        mSlr.abortAnimation();
+        scroller.abortAnimation();
     }
 
-    @Override
-    /*
+    /**
      * override the computeScroll to restart scrolling when finished so as that
      * the text is scrolled forever
      */
+    @Override
     public void computeScroll() {
         super.computeScroll();
 
-        if (null == mSlr) return;
+        if (null == scroller) return;
 
-        if (mSlr.isFinished() && (!mPaused)) {
-            this.startScroll();
+        if (scroller.isFinished() && (!paused)) {
+            start();
         }
     }
 
-    public int getRndDuration() {
-        return mRndDuration;
+    public long getDuration() {
+        return duration;
     }
 
-    public void setRndDuration(int duration) {
-        this.mRndDuration = duration;
+    public void setDuration(long millis) { this.duration = millis; }
+
+    public void setDuration(double seconds) {
+        double mSeconds = seconds * 1000L;
+        this.duration = (long) mSeconds;
+    }
+
+    public void setDuration(int minutes) {
+        double mMinutes = minutes * 60000L;
+        this.duration = (long) mMinutes;
     }
 
     public boolean isPaused() {
-        return mPaused;
+        return paused;
     }
 }
