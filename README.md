@@ -1,4 +1,5 @@
 # Runnning TextView
+A running text library that is easy to customize and easy to set up.
 
 ## Installation
 #### settings.gradle.kts
