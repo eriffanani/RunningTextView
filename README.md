@@ -1,8 +1,8 @@
 # Runnning TextView
 A running text library that is easy to customize and easy to set up.
 
-<img src="https://github.com/user-attachments/assets/113ae19d-185c-42f4-a7cf-a49e879860f2" width="480px"/>
-<img src="https://github.com/user-attachments/assets/6a0ba67e-3e7e-4fe1-81eb-f9281ef4f8de" width="480px"/>
+<img src="https://github.com/user-attachments/assets/113ae19d-185c-42f4-a7cf-a49e879860f2" width="320px"/>
+<img src="https://github.com/user-attachments/assets/6a0ba67e-3e7e-4fe1-81eb-f9281ef4f8de" width="320px"/>
 
 ## Installation
 #### settings.gradle.kts
