@@ -1,6 +1,9 @@
 # Runnning TextView
 A running text library that is easy to customize and easy to set up.
 
+<img src="https://github.com/user-attachments/assets/113ae19d-185c-42f4-a7cf-a49e879860f2" width="480px"/>
+<img src="https://github.com/user-attachments/assets/6a0ba67e-3e7e-4fe1-81eb-f9281ef4f8de" width="480px"/>
+
 ## Installation
 #### settings.gradle.kts
 ```kotlin
@@ -13,11 +16,11 @@ dependencyResolutionManagement {
 
 #### build.gradle(Module: app)
 ```kotlin
-implementation 'com.github.eriffanani:RunningTextView:1.0.0'
+implementation 'com.github.eriffanani:RunningTextView:1.1.0'
 ```
 #### build.gradle.kts(Module: app)
 ```kotlin
-implementation("com.github.eriffanani:RunningTextView:1.0.0")
+implementation("com.github.eriffanani:RunningTextView:1.1.0")
 ```
 
 ## How To Use
