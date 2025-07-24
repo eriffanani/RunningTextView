@@ -22,12 +22,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        //runningText.setDuration(1) // 1 Minutes (Integer)
-        //runningText.setDuration(10.0) // 10 Seconds (Double)
-        //runningText.duration = 10000L // 10 Seconds (Long)
-        //runningText.start()
-        //runningText.pause()
-        //runningText.resume()
-
     }
 }
